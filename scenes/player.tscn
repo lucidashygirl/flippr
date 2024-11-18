@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=3 uid="uid://boxhax6pe3hhg"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_mn1tm"]
+[ext_resource type="Texture2D" uid="uid://6551av5al1i1" path="res://sprites/player_flippr.webp" id="2_g32j8"]
+[ext_resource type="AudioStream" uid="uid://cetl2ijfpu2nq" path="res://sounds/die.ogg" id="3_hxgca"]
+[ext_resource type="AudioStream" uid="uid://bprn2j32513qu" path="res://sounds/victory.ogg" id="4_hchei"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s51b0"]
+size = Vector2(14, 14)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gbgcg"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 1.0
+spread = 180.0
+angular_velocity_min = -328.96
+angular_velocity_max = 378.62
+gravity = Vector3(0, 98, 0)
+
+[node name="Player" type="CharacterBody2D" groups=["death_particle"]]
+script = ExtResource("1_mn1tm")
+
+[node name="PlayerSprite" type="Sprite2D" parent="." groups=["death_particle", "player"]]
+texture_filter = 1
+position = Vector2(-1.49012e-08, 1.49012e-08)
+texture = ExtResource("2_g32j8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_s51b0")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_s51b0")
+
+[node name="PlayerDeathParticle" type="GPUParticles2D" parent="." groups=["death_particle", "player"]]
+z_index = 1
+texture_filter = 1
+emitting = false
+amount = 1
+process_material = SubResource("ParticleProcessMaterial_gbgcg")
+texture = ExtResource("2_g32j8")
+lifetime = 13.4
+one_shot = true
+speed_scale = 2.0
+fixed_fps = 60
+
+[node name="DeathTone" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_hxgca")
+
+[node name="VictoryTone" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_hchei")
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
+[connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
